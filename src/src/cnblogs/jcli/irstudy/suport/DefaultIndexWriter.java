@@ -3,7 +3,7 @@ package cnblogs.jcli.irstudy.suport;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import cnblogs.jcli.irstudy.Entry;
+import cnblogs.jcli.irstudy.Document;
 import cnblogs.jcli.irstudy.IndexWriter;
 
 public class DefaultIndexWriter implements IndexWriter{
@@ -15,7 +15,7 @@ public class DefaultIndexWriter implements IndexWriter{
 	}
 	
 	@Override
-	public void write(Entry entry) {
+	public void write(Document entry) {
 		
 		
 	}
