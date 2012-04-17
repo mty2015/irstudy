@@ -1,4 +1,4 @@
-package cnblogs.jcli.irstudy.suport;
+package cnblogs.jcli.irstudy.suport.struct;
 
 import java.io.Serializable;
 
