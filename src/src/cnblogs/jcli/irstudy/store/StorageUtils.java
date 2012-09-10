@@ -4,7 +4,8 @@ public class StorageUtils {
 
 	public static Node allocateNewNode(Storage storage){
 		Node node = new Node();
-		node.setStoragePointer(storage.getPointer());
+		node.setStoragePointer(storage.length());
+		storage.seek(storage.length());
 		storage.write(node.toBytes());
 		return node;
 	}

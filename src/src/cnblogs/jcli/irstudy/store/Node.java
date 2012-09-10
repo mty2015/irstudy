@@ -4,7 +4,7 @@ package cnblogs.jcli.irstudy.store;
 public class Node {
 	
 	
-	private static final int DATAITEMS_COUNT = 3;
+	protected static final int DATAITEMS_COUNT = 3;
 	
 	protected static final int NODE_BYTE_LENGTH = 10;
 	
@@ -47,6 +47,17 @@ public class Node {
 		return count >= DATAITEMS_COUNT ? true : false;
 	}
 
+	/**
+	 * clear data in the node ,but don't clear up the info about the storage pointer
+	 */
+	public void clear() {
+		dataItems = new DataItem[DATAITEMS_COUNT];
+		child = new Node[DATAITEMS_COUNT + 1];
+		parent = null;
+		count = 0;
+		
+	}
+	
 	public int getStoragePointer() {
 		return storagePointer;
 	}

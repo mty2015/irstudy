@@ -11,5 +11,7 @@ public interface Storage {
 	public int read(byte[] b);
 
 	public int readInt();
+
+	public int length();
 	
 }

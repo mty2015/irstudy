@@ -33,7 +33,33 @@ public class BTree {
 		}
 	}
 	
-	private void splitUp(Node insertedLeaf) {
+	private void splitUp(Node node) {
+		if(node == null || node.getCount() < Node.DATAITEMS_COUNT){//if null or not be full
+			return;
+		}
+		if(node.getParent() == null){//split up the root node 
+			//create the new root node
+			Node newRoot = StorageUtils.allocateNewNode(storage);
+			//crate the new right sibling node
+			Node right = StorageUtils.allocateNewNode(storage);
+			//process the new root
+			newRoot.clear();
+			newRoot.setCount(1);
+			newRoot.addDataItem(node.getDataItems()[1]);// move the middle node to new root
+			newRoot.getChild()[0] = node;
+			newRoot.getChild()[1] = right;
+			StorageUtils.flushToStorage(newRoot, storage);
+			//process the new right
+			right.clear();
+			right.setParent(newRoot);
+			right.addDataItem(node.getDataItems()[2]);
+			right.getChild()[0] = node.getChild()[2];
+			right.getChild()[1] = node.getChild()[4];
+			
+			
+		}else{
+			
+		}
 		
 		
 	}
