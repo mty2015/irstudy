@@ -9,8 +9,7 @@ public class BTree {
 	public BTree(Storage storage){
 		this.storage = storage;
 		int rootPointer = storage.readInt();
-		storage.seek(rootPointer);
-		root = StorageUtils.loadNode(storage);
+		root = StorageUtils.loadNode(storage,rootPointer);
 	}
 	
 	public int insert(DataItem item){
@@ -44,21 +43,32 @@ public class BTree {
 			Node right = StorageUtils.allocateNewNode(storage);
 			//process the new root
 			newRoot.clear();
-			newRoot.setCount(1);
-			newRoot.addDataItem(node.getDataItems()[1]);// move the middle node to new root
-			newRoot.getChild()[0] = node;
-			newRoot.getChild()[1] = right;
+			newRoot.setLeaf(false);
+			newRoot.addDataItem(node.getDataItems()[1],node,right);// move the middle node to new root
 			StorageUtils.flushToStorage(newRoot, storage);
 			//process the new right
 			right.clear();
+			right.setLeaf(node.isLeaf());
 			right.setParent(newRoot);
-			right.addDataItem(node.getDataItems()[2]);
-			right.getChild()[0] = node.getChild()[2];
-			right.getChild()[1] = node.getChild()[4];
-			
-			
-		}else{
-			
+			right.addDataItem(node.getDataItems()[2],node.getChild()[2],node.getChild()[3]);
+			StorageUtils.flushToStorage(right, storage);
+			//process the original node
+			node.setParent(newRoot);
+			node.setCount(1);
+			StorageUtils.flushToStorage(right, storage);
+		}else{//split up the other nodes except the root
+			//create the new rightsibling node
+			Node right = StorageUtils.allocateNewNode(storage);
+			//process the new right
+			right.clear();
+			right.setLeaf(node.isLeaf());
+			right.setParent(node.getParent());
+			right.addDataItem(node.getDataItems()[2],node.getChild()[2],node.getChild()[3]);
+			StorageUtils.flushToStorage(right, storage);
+			//process the parent node
+			Node parent = StorageUtils.loadNode(storage,node.getParent().getStoragePointer());
+			parent.addDataItem(node.getDataItems()[1],right);
+			StorageUtils.flushToStorage(right, storage);
 		}
 		
 		
@@ -70,12 +80,13 @@ public class BTree {
 		//if the root is full,split up
 		if(node.isFull()){
 			splitUp(node);
-			storage.seek(node.getParent().getStoragePointer());
-			Node searchNode = StorageUtils.loadNode(storage);
+			//splitup the node may change the the inner info with the node,so must reload the node
+			node = StorageUtils.loadNode(storage, node.getStoragePointer());
+			Node searchNode = StorageUtils.loadNode(storage,node.getParent().getStoragePointer());
 			return searchInsertedLeaf(searchNode,item);
 		}
 		
-		if(node.getCount() == 0)
+		if(node.isLeaf())
 			return node;
 		
 		for(int i = 0 ; i < node.getCount() ; i++){
@@ -83,14 +94,12 @@ public class BTree {
 			if(item.compareTo(currentItem) == 0){
 				throw new RuntimeException("it is denied to insert duplicated data item");
 			}else if(item.compareTo(currentItem) < 0 ){
-				storage.seek(node.getChild()[i].getStoragePointer());
-				Node searchChild = StorageUtils.loadNode(storage);
+				Node searchChild = StorageUtils.loadNode(storage,node.getChild()[i].getStoragePointer());
 				return searchInsertedLeaf(searchChild,item);
 			}
 		}
 		//search on the last child node
-		storage.seek(node.getChild()[node.getCount()].getStoragePointer());
-		Node searchChild = StorageUtils.loadNode(storage);
+		Node searchChild = StorageUtils.loadNode(storage,node.getChild()[node.getCount()].getStoragePointer());
 		return searchInsertedLeaf(searchChild,item);
 		
 	}

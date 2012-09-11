@@ -1,14 +1,18 @@
 package cnblogs.jcli.irstudy.store;
 
 public class DataItem implements Comparable<DataItem>{
-
-	private String key;
 	
-	private int storageOffset;
+	protected static final int BYTE_LENGTH = 10;
+	
+	private String key;
 	
 	@Override
 	public int compareTo(DataItem o) {
-		return 0;
+		if(o == null)
+			return 1;
+		
+		
+		return key.compareTo(o.getKey());
 	}
 
 	public String getKey() {
@@ -19,13 +23,10 @@ public class DataItem implements Comparable<DataItem>{
 		this.key = key;
 	}
 
-	public int getStorageOffset() {
-		return storageOffset;
+	public byte[] toBytes() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public void setStorageOffset(int storageOffset) {
-		this.storageOffset = storageOffset;
-	}
-	
 	
 }

@@ -4,17 +4,19 @@ public class StorageUtils {
 
 	public static Node allocateNewNode(Storage storage){
 		Node node = new Node();
+		node.clear();
 		node.setStoragePointer(storage.length());
 		storage.seek(storage.length());
 		storage.write(node.toBytes());
 		return node;
 	}
 	
-	public static Node loadNode(Storage storage){
+	public static Node loadNode(Storage storage,int offset){
+		storage.seek(offset);
 		Node node = new Node();
-		byte[] b = new byte[Node.NODE_BYTE_LENGTH];
+		byte[] b = new byte[DataItem.BYTE_LENGTH];
 		int len = storage.read(b);
-		if(len <= Node.NODE_BYTE_LENGTH){
+		if(len <= DataItem.BYTE_LENGTH){
 			storage.seek(storage.getPointer() - len);//if load node fail,reset the offset
 			return null;
 		}
