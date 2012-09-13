@@ -12,7 +12,7 @@ public class DataItem implements Comparable<DataItem>{
 	@Override
 	public int compareTo(DataItem o) {
 		if(o == null)
-			return 1;
+			throw new NullPointerException();
 		
 		
 		return key.compareTo(o.getKey());

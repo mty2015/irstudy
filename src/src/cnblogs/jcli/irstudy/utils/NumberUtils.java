@@ -9,7 +9,7 @@ public class NumberUtils {
 	}
 	
 	public static int byteArrayToInt(byte[] b){
-		return (b[0] << 24 + b[1] << 16 + b[2] << 8 + b[3]);
+		return ((b[0] & 0xff) << 24) + ((b[1] & 0xff) << 16) + ((b[2] & 0xff) << 8) + (b[3] & 0xff);
 	}
 
 }

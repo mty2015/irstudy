@@ -19,7 +19,7 @@ public class Node {
 	 */
 	public static final int NODE_BYTES_LEN = 4 + 4 + 1 + 1
 			+ DataItem.BYTE_LENGTH * DATAITEMS_COUNT
-			+ (4 * DATAITEMS_COUNT + 1);
+			+ 4 * (DATAITEMS_COUNT + 1);
 
 	private long storagePointer;
 
@@ -68,7 +68,7 @@ public class Node {
 				child[i + 1] = insertedChild[0];
 			else if (insertedChild.length == 2) {
 				child[0] = insertedChild[0];
-				child[1] = insertedChild[0];
+				child[1] = insertedChild[1];
 			}
 		}
 
@@ -138,9 +138,13 @@ public class Node {
 		storagePointer = NumberUtils.byteArrayToInt(Arrays.copyOfRange(b,
 				coordinate, coordinate + 4));
 		coordinate += 4;
-		parent.storagePointer = NumberUtils.byteArrayToInt(Arrays.copyOfRange(
+		int parent_storagePointer = NumberUtils.byteArrayToInt(Arrays.copyOfRange(
 				b, coordinate, coordinate + 4));
 		coordinate += 4;
+		if(parent_storagePointer > 0){
+			parent = new Node();
+			parent.storagePointer = parent_storagePointer;
+		}
 		count = b[coordinate];
 		coordinate += 1;
 		isLeaf = b[coordinate] == 1 ? true : false;

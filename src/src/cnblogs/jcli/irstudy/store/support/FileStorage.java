@@ -51,7 +51,7 @@ public class FileStorage implements Storage{
 		try {
 			file.seek(offset);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("seek : " + offset,e);
 		}
 		
 	}
