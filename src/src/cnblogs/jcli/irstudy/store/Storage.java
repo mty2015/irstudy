@@ -2,16 +2,16 @@ package cnblogs.jcli.irstudy.store;
 
 public interface Storage {
 
-	public void seek(int offset);
+	public void seek(long offset);
 	
 	public void write(byte[] b);
 
-	public int getPointer();
+	public long getPointer();
 
 	public int read(byte[] b);
 
-	public int readInt();
+	public long length();
 
-	public int length();
+	public void close();
 	
 }

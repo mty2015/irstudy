@@ -11,12 +11,12 @@ public class StorageUtils {
 		return node;
 	}
 	
-	public static Node loadNode(Storage storage,int offset){
+	public static Node loadNode(Storage storage,long offset){
 		storage.seek(offset);
 		Node node = new Node();
-		byte[] b = new byte[DataItem.BYTE_LENGTH];
+		byte[] b = new byte[Node.NODE_BYTES_LEN];
 		int len = storage.read(b);
-		if(len <= DataItem.BYTE_LENGTH){
+		if(len <= Node.NODE_BYTES_LEN){
 			storage.seek(storage.getPointer() - len);//if load node fail,reset the offset
 			return null;
 		}

@@ -1,5 +1,7 @@
 package cnblogs.jcli.irstudy.store;
 
+import cnblogs.jcli.irstudy.utils.NumberUtils;
+
 public class BTree {
 	
 	private Storage storage;
@@ -8,11 +10,16 @@ public class BTree {
 	
 	public BTree(Storage storage){
 		this.storage = storage;
-		int rootPointer = storage.readInt();
-		root = StorageUtils.loadNode(storage,rootPointer);
+		byte[] b = new byte[4];
+		storage.seek(0);
+		int len = storage.read(b);
+		if(len == 4){
+			int rootPointer = NumberUtils.byteArrayToInt(b);
+			root = StorageUtils.loadNode(storage,rootPointer);
+		}
 	}
 	
-	public int insert(DataItem item){
+	public long insert(DataItem item){
 		Node insertedLeaf = searchInsertedLeaf(root,item);
 		if(insertedLeaf == null){//the tree is empty,create root node
 			root = StorageUtils.allocateNewNode(storage);
@@ -102,6 +109,10 @@ public class BTree {
 		Node searchChild = StorageUtils.loadNode(storage,node.getChild()[node.getCount()].getStoragePointer());
 		return searchInsertedLeaf(searchChild,item);
 		
+	}
+	
+	public void releaseSource(){
+		storage.close();
 	}
 	
 }
