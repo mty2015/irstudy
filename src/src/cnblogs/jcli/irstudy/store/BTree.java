@@ -17,26 +17,33 @@ public class BTree {
 			int rootPointer = NumberUtils.byteArrayToInt(b);
 			root = StorageUtils.loadNode(storage,rootPointer);
 		}
+		if(root == null){//init a new b_tree
+			storage.seek(0);
+			storage.write(NumberUtils.intToByteArray(4));
+		}
 	}
 	
 	public long insert(DataItem item){
+		System.out.println("begin insert : " + item.getKey());
 		Node insertedLeaf = searchInsertedLeaf(root,item);
+		long pointer ;
 		if(insertedLeaf == null){//the tree is empty,create root node
 			root = StorageUtils.allocateNewNode(storage);
 			root.addDataItem(item);
-			StorageUtils.flushToStorage(root,storage);
-			return root.getStoragePointer();
+			pointer =  root.getStoragePointer();
 		}else{
-			if(insertedLeaf.isFull()){//leaf node is full,so must split up the leaf 
-				splitUp(insertedLeaf);
-				//after split up ,then recall insert operation
-				return insert(item);
-			}else{
-				insertedLeaf.addDataItem(item);
-				StorageUtils.flushToStorage(insertedLeaf,storage);
-				return insertedLeaf.getStoragePointer();
-			}
+//			if(insertedLeaf.isFull()){//leaf node is full,so must split up the leaf 
+//				splitUp(insertedLeaf);
+//				//after split up ,then recall insert operation
+//				pointer =  insert(item);
+//			}else{
+			insertedLeaf.addDataItem(item);
+			StorageUtils.flushToStorage(insertedLeaf,storage);
+			pointer =  insertedLeaf.getStoragePointer();
+//			}
 		}
+		System.out.println("insert end : " + item.getKey());
+		return pointer;
 	}
 	
 	private void splitUp(Node node) {
@@ -46,6 +53,10 @@ public class BTree {
 		if(node.getParent() == null){//split up the root node 
 			//create the new root node
 			Node newRoot = StorageUtils.allocateNewNode(storage);
+			//reset the new root ref
+			root = newRoot;
+			storage.seek(0);
+			storage.write(NumberUtils.intToByteArray((int)root.getStoragePointer()));
 			//crate the new right sibling node
 			Node right = StorageUtils.allocateNewNode(storage);
 			//process the new root
@@ -62,7 +73,7 @@ public class BTree {
 			//process the original node
 			node.setParent(newRoot);
 			node.setCount(1);
-			StorageUtils.flushToStorage(right, storage);
+			StorageUtils.flushToStorage(node, storage);
 		}else{//split up the other nodes except the root
 			//create the new rightsibling node
 			Node right = StorageUtils.allocateNewNode(storage);
@@ -75,7 +86,10 @@ public class BTree {
 			//process the parent node
 			Node parent = StorageUtils.loadNode(storage,node.getParent().getStoragePointer());
 			parent.addDataItem(node.getDataItems()[1],right);
-			StorageUtils.flushToStorage(right, storage);
+			StorageUtils.flushToStorage(parent, storage);
+			//process the original node
+			node.setCount(1);
+			StorageUtils.flushToStorage(node, storage);
 		}
 		
 		

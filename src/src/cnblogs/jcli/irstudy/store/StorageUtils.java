@@ -16,9 +16,9 @@ public class StorageUtils {
 		Node node = new Node();
 		byte[] b = new byte[Node.NODE_BYTES_LEN];
 		int len = storage.read(b);
-		if(len <= Node.NODE_BYTES_LEN){
+		if(len < Node.NODE_BYTES_LEN){
 			storage.seek(storage.getPointer() - len);//if load node fail,reset the offset
-			return null;
+			throw new RuntimeException("storage load data starts at : " + offset + ",but couldn't read success");
 		}
 		node.fill(b);
 		return node;
