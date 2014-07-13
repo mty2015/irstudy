@@ -4,6 +4,6 @@ import java.io.InputStream;
 
 public interface IndexReader {
 
-	IndexHelper read(InputStream is);
-	
+    IndexHelper read(InputStream is);
+
 }

@@ -3,58 +3,64 @@ package cnblogs.jcli.irstudy.store;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-public class DataItem implements Comparable<DataItem>{
-	
-	protected static final int BYTE_LENGTH = 10;
-	
-	private String key;
-	
-	@Override
-	public int compareTo(DataItem o) {
-		if(o == null)
-			throw new NullPointerException();
-		
-		
-		return key.compareTo(o.getKey());
-	}
+public class DataItem implements Comparable<DataItem> {
 
-	public String getKey() {
-		return key;
-	}
+    protected static final int BYTE_LENGTH = 10;
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    private String key;
 
-	/**
-	 * <pre>
-	 * 	-----------------------------------
-	 * 	 len(1) | content
-	 * 	-----------------------------------
-	 * </pre>
-	 * @return
-	 */
-	public byte[] toBytes() {
-		byte[] b = new byte[BYTE_LENGTH];
-		try {
-			byte[] content = key.getBytes("UTF-8");
-			b[0] = (byte)content.length;
-			System.arraycopy(content, 0, b, 1, content.length);
-			return b;
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    public int compareTo(DataItem o) {
+        if (o == null)
+            throw new NullPointerException();
 
-	public void fill(byte[] b) {
-		int len = b[0];
-		try {
-			key = new String(Arrays.copyOfRange(b, 1, len+1),"UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-		
-	}
 
-	
+        return key.compareTo(o.getKey());
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    /**
+     * <pre>
+     * 	-----------------------------------
+     * 	 len(1) | content
+     * 	-----------------------------------
+     * </pre>
+     *
+     * @return
+     */
+    public byte[] toBytes() {
+        byte[] b = new byte[BYTE_LENGTH];
+        try {
+            byte[] content = key.getBytes("UTF-8");
+            b[0] = (byte) content.length;
+            System.arraycopy(content, 0, b, 1, content.length);
+            return b;
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void fill(byte[] b) {
+        int len = b[0];
+        try {
+            key = new String(Arrays.copyOfRange(b, 1, len + 1), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return "DataItem{" +
+                "key='" + key + '\'' +
+                '}';
+    }
 }
